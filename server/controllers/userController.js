@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const generateWebToken = require("../utils/generateJWT");
 const tokenFromHeader = require("../utils/getTokensFromHeader");
+const verifyToken = require("../utils/verifyToken");
 
 const registeredUserCtrl = asyncHandler(async (req, res) => {
   try {
@@ -61,7 +62,10 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
 
 const getUserProfileCtrl = asyncHandler(async (req, res) => {
   let token = tokenFromHeader(req);
-  console.log(token);
+
+  const verified = verifyToken(token);
+  console.log(verified);
+
   res.json({
     msg: "Welcome to user profile page.",
   });
