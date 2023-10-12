@@ -40,6 +40,12 @@ const ProductSchema = new mongoose.Schema(
         ref: "Review",
       },
     ],
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
     price: {
       type: Number,
       required: true,

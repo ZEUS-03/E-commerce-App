@@ -13,7 +13,10 @@ const createCategoryCtrl = asyncHandler(async (req, res) => {
     throw new Error(`Category ${name} already exists`);
   }
   // create new category if it doesn't already exist
-  const category = await Category.create({ name, user: req.userAuthId });
+  const category = await Category.create({
+    name: name.toLowerCase(),
+    user: req.userAuthId,
+  });
   res.json({
     status: "Success",
     msg: "Category created successfully!",
