@@ -152,7 +152,7 @@ const allProducts = asyncHandler(async (req, res) => {
     };
   }
 
-  const products = await productQuery;
+  const products = await productQuery.populate("reviews");
 
   res.json({
     status: "success",
@@ -169,7 +169,8 @@ const allProducts = asyncHandler(async (req, res) => {
 // @access public
 const getSingleProductCtrl = asyncHandler(async (req, res) => {
   // console.log(req.params);
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate("reviews");
+
   if (!product) {
     throw new Error("Product not found!");
   }
