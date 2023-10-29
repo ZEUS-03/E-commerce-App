@@ -64,7 +64,14 @@ const ProductSchema = new mongoose.Schema(
 );
 
 // Virtuals
-//getting length of variable
+// Getting limited stocks for a product
+
+ProductSchema.virtual("qtyLeft").get(function () {
+  let product = this;
+  return product.totalQty - product.totalSold;
+});
+
+// Getting length of variable
 ProductSchema.virtual("totalReviews").get(function () {
   let product = this;
   return this?.reviews?.length;
