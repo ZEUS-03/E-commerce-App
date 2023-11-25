@@ -51,4 +51,54 @@ const getAllCouponsCtrl = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { createCouponCtrl, getAllCouponsCtrl };
+const getSingleCouponCtrl = asyncHandler(async (req, res) => {
+  const couponId = req.params.id;
+  const coupon = await Coupons.findById(couponId);
+  if (!coupon) {
+    throw new Error("No coupon found");
+  }
+  res.json({
+    status: "success",
+    msg: "Coupon fetched successfully",
+    coupon,
+  });
+});
+
+const updateCouponCtrl = asyncHandler(async (req, res) => {
+  const { code, startDate, endDate, discount } = req.body;
+  const couponId = req.params.id;
+  const coupon = await Coupons.findByIdAndUpdate(
+    couponId,
+    {
+      code: code?.toUpperCase(),
+      startDate,
+      endDate,
+      discount,
+    },
+    {
+      new: true,
+    }
+  );
+  res.json({
+    status: "success",
+    msg: "Coupon updated successfully",
+    coupon,
+  });
+});
+
+const deleteCouponCtrl = asyncHandler(async (req, res) => {
+  const couponId = req.params.id;
+  await Coupons.findByIdAndDelete(couponId);
+  res.json({
+    status: "success",
+    msg: "Coupon deleted successfully.",
+  });
+});
+
+module.exports = {
+  createCouponCtrl,
+  getAllCouponsCtrl,
+  getSingleCouponCtrl,
+  updateCouponCtrl,
+  deleteCouponCtrl,
+};
