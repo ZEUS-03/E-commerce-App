@@ -3,11 +3,27 @@ const User = require("../model/User");
 const asyncHandler = require("express-async-handler");
 const Product = require("../model/Products");
 const Stripe = require("stripe");
+const Coupons = require("../model/Coupons");
 
 // stripe instance
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
 const createOrderCtrl = asyncHandler(async (req, res) => {
+  // Find if any coupon is applied
+  const { coupon } = req?.query;
+  // console.log(coupon);
+  const couponFound = await Coupons.findOne({ code: coupon?.toUpperCase() });
+  // console.log(couponFound, couponFound?.discount);
+  if (!couponFound) {
+    throw new Error("Coupon does not exist!");
+  }
+
+  if (couponFound.isExpired) {
+    throw new Error("Coupon is expired! Please enter a new coupon code.");
+  }
+
+  const discount = couponFound?.discount / 100;
+
   // 1. Find the user
   const user = await User.findById(req.userAuthId);
   if (!user?.hasShippingAddress) {
@@ -24,8 +40,9 @@ const createOrderCtrl = asyncHandler(async (req, res) => {
     user: user?._id,
     orderItems,
     shippingAddress,
-    totalPrice,
+    totalPrice: couponFound ? totalPrice - totalPrice * discount : totalPrice,
   });
+  console.log(order);
 
   // 5. update the product quantity
   const products = await Product.find({ _id: { $in: orderItems } }); // Finding array of products in Product modal.
@@ -35,7 +52,6 @@ const createOrderCtrl = asyncHandler(async (req, res) => {
     });
     if (product) {
       product.totalSold += item.qty;
-      // console.log(product);
     }
     await product.save();
   });
@@ -58,6 +74,9 @@ const createOrderCtrl = asyncHandler(async (req, res) => {
   });
   const session = await stripe.checkout.sessions.create({
     line_items: orderObject,
+    metadata: {
+      orderId: JSON.stringify(order?._id),
+    },
     mode: "payment",
     success_url: "http://localhost:5000/success",
     cancel_url: "http://localhost:5000/cancel",
@@ -72,4 +91,41 @@ const createOrderCtrl = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = createOrderCtrl;
+const fetchAllOrdersCtrl = asyncHandler(async (req, res) => {
+  const orders = await Order.find();
+  res.json({
+    message: "Success",
+    orders,
+  });
+});
+
+const fetchSingleOrderCtrl = asyncHandler(async (req, res) => {
+  const orderId = req.params.orderId;
+  const order = await Order.findById(orderId);
+  res.json({
+    message: "Success",
+    order,
+  });
+});
+const updateStatusCtrl = asyncHandler(async (req, res) => {
+  const orderId = req.params.orderId;
+  const status = req.body.status;
+
+  const updatedOrder = await Order.findByIdAndUpdate(
+    orderId,
+    {
+      status,
+    },
+    { new: true }
+  );
+  res.json({
+    msg: "success",
+    updatedOrder,
+  });
+});
+module.exports = {
+  createOrderCtrl,
+  fetchAllOrdersCtrl,
+  fetchSingleOrderCtrl,
+  updateStatusCtrl,
+};

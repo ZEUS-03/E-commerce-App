@@ -1,9 +1,17 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
+const Stripe = require("stripe");
+const Order = require("../model/Order.js");
+
 const {
   globalErrorHandler,
   invalidRoute,
 } = require("../middlewares/GlobalErrorHandler.js");
+// const Stripe = require("stripe");
+
+// stripe instance
+// console.log(process.env.STRIPE_KEY);
+// const stripe = new Stripe(process.env.STRIPE_KEY);
 
 const { dbConnect } = require("../config/dbConnect.js");
 
@@ -15,9 +23,61 @@ const brandRoute = require("../routes/brandRoute");
 const colorRoute = require("../routes/colorRoute");
 const reviewRoute = require("../routes/reviewRoute");
 const orderRouter = require("../routes/orderRoute");
+const couponRouter = require("../routes/couponRoute");
 
 dbConnect();
 const app = express();
+
+// stripe instance
+const stripe = new Stripe(process.env.STRIPE_KEY);
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret =
+  "whsec_52dab6e7b374f13002c50d21c67b5e6cf1c5c5547560b73a66e18c3f29826028";
+
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (request, response) => {
+    // console.log("test");
+    const sig = request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      // console.log("event");
+    } catch (err) {
+      console.log(err.message);
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      const { orderId } = session.metadata;
+      const paymentStatus = session.payment_status;
+      const paymentMethod = session.payment_method_types[0];
+      const totalAmount = session.amount_total;
+      const currency = session.currency;
+
+      // console.log(orderId, paymentStatus, paymentMethod, totalAmount, currency);
+      const order = await Order.findByIdAndUpdate(
+        JSON.parse(orderId),
+        {
+          orderTotal: totalAmount / 100,
+          paymentStatus,
+          paymentMethod,
+          currency,
+        },
+        { new: true }
+      );
+    } else {
+      return;
+    }
+    response.send();
+  }
+);
 
 app.use(express.json());
 
@@ -28,6 +88,7 @@ app.use("/api/v1/brand", brandRoute);
 app.use("/api/v1/color", colorRoute);
 app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/coupons", couponRouter);
 
 app.use(invalidRoute);
 

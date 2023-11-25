@@ -61,13 +61,11 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
 // @access Private
 
 const getUserProfileCtrl = asyncHandler(async (req, res) => {
-  let token = tokenFromHeader(req);
-
-  const verified = verifyToken(token);
-  console.log(verified);
-
+  const user = await User.findById(req.userAuthId).populate("orders");
   res.json({
-    msg: "Welcome to user profile page.",
+    status: "success",
+    message: "User profile fetched successfully!",
+    user,
   });
 });
 

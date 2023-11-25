@@ -30,7 +30,7 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       default: "not paid",
     },
-    orderTotal: {
+    totalPrice: {
       type: Number,
       default: 0.0,
     },
