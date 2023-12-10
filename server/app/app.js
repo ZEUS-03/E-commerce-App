@@ -17,6 +17,7 @@ const { dbConnect } = require("../config/dbConnect.js");
 
 // Routes
 const { userRoute } = require("../routes/userRoute.js");
+const path = require("path");
 const productRouter = require("../routes/productRoute");
 const { categoryRouter } = require("../routes/categoryRoute.js");
 const brandRoute = require("../routes/brandRoute");
@@ -82,6 +83,14 @@ app.post(
 );
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//server static files
+app.use(express.static("public"));
+// Home
+app.get("/", (req, res) => {
+  res.sendFile(path.join("public", "index.html"));
+});
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/products", productRouter);
