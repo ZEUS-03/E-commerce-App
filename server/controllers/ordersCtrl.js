@@ -14,11 +14,8 @@ const createOrderCtrl = asyncHandler(async (req, res) => {
   // console.log(coupon);
   const couponFound = await Coupons.findOne({ code: coupon?.toUpperCase() });
   // console.log(couponFound, couponFound?.discount);
-  if (!couponFound) {
-    throw new Error("Coupon does not exist!");
-  }
 
-  if (couponFound.isExpired) {
+  if (couponFound?.isExpired) {
     throw new Error("Coupon is expired! Please enter a new coupon code.");
   }
 
@@ -123,9 +120,63 @@ const updateStatusCtrl = asyncHandler(async (req, res) => {
     updatedOrder,
   });
 });
+
+// get sum of all the orders placed
+// @api GET /orders/sales/sum
+
+const getOrdersStatsCtrl = asyncHandler(async (req, res) => {
+  const orderStats = await Order.aggregate([
+    {
+      $group: {
+        // groups all documents based on particular property, in this case, all orders and summing prices them up.
+        _id: null,
+        totalSales: {
+          $sum: "$totalPrice",
+        },
+        minOrder: {
+          $min: "$totalPrice",
+        },
+        maxOrder: {
+          $max: "$totalPrice",
+        },
+        avgOrder: {
+          $avg: "$totalPrice",
+        },
+      },
+    },
+  ]);
+
+  const date = new Date();
+  const toady = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const getSalesToday = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: toady,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSales: {
+          $sum: "$totalPrice",
+        },
+      },
+    },
+  ]);
+  res.status(200).json({
+    success: true,
+    message: "Sum of orders",
+    orderStats,
+    getSalesToday,
+  });
+});
+
 module.exports = {
   createOrderCtrl,
   fetchAllOrdersCtrl,
   fetchSingleOrderCtrl,
   updateStatusCtrl,
+  getOrdersStatsCtrl,
 };

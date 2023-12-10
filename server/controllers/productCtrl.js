@@ -8,6 +8,8 @@ const Brand = require("../model/Brand");
 // @access Private/Admin
 
 const createProductCtrl = asyncHandler(async (req, res) => {
+  const files = req.files;
+
   const { name, description, category, sizes, colors, price, totalQty, brand } =
     req.body;
 
@@ -32,7 +34,15 @@ const createProductCtrl = asyncHandler(async (req, res) => {
   if (productExists) {
     throw new Error(`Product ${name} already exists`);
   }
-  //create product
+
+  // Extracting files links out of the file object
+  let image;
+  if (files) {
+    image = files.map((element) => {
+      return element.path;
+    });
+  }
+  // create product
   const product = await Product.create({
     name,
     description,
@@ -43,6 +53,7 @@ const createProductCtrl = asyncHandler(async (req, res) => {
     price,
     totalQty,
     brand,
+    image,
   });
   // Push product into category
   categoryFound.products.push(product._id);

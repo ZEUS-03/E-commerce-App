@@ -33,7 +33,13 @@ const ProductSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    images: [{ type: String, default: "https://placehold.co/600x400/png" }],
+    image: [
+      {
+        type: String,
+        default: "https://placehold.co/600x400/png",
+        required: true,
+      },
+    ],
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,

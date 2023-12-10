@@ -7,7 +7,7 @@ const verifyToken = require("../utils/verifyToken");
 
 const registeredUserCtrl = asyncHandler(async (req, res) => {
   try {
-    const { fullname, email, password } = req.body;
+    const { fullname, email, password, isAdmin } = req.body;
 
     // check if user is already registered
     const userExists = await User?.findOne({ email });
@@ -24,6 +24,7 @@ const registeredUserCtrl = asyncHandler(async (req, res) => {
       fullname: fullname,
       email: email,
       password: passwordHash,
+      isAdmin: isAdmin ? true : false,
     });
 
     res.status(201).json({
