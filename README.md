@@ -25,7 +25,7 @@ This open-source E-Commerce project is designed to provide a flexible and scalab
 - **Frontend:** React, Redux
 - **Authentication:** JWT (JSON Web Tokens)
 - **Image Storage:** Cloudinary
-- **Payment Integration:** [Payment Gateway Provider]
+- **Payment Integration:** Stripe
 
 ## Getting Started
 
@@ -34,13 +34,13 @@ To get started with the project, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/ecommerce-project.git
+    https://github.com/ZEUS-03/E-commerce-App.git
     ```
 
 2. Install dependencies:
 
     ```bash
-    cd ecommerce-project
+    cd E-commerce-App
     npm install
     ```
 
