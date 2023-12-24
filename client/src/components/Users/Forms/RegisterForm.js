@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import ErrorComponent from "../../ErrorMsg/ErrorMsg";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserAction } from "../../../redux/slices/usersSlice";
+import ErrorMsg from "../../ErrorMsg/ErrorMsg";
+import LoadingComponent from "../../LoadingComp/LoadingComponent";
 
 const RegisterForm = () => {
   //dispatch
@@ -15,18 +18,26 @@ const RegisterForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const dispatch = useDispatch();
+
   //---onsubmit handler----
   const onSubmitHandler = (e) => {
     e.preventDefault();
+    dispatch(registerUserAction({ fullname, email, password }));
   };
   //select store data
 
   //select store data
-  const { loading, userAuth } = {};
-  //redirect
-  if (userAuth?.userInfo?.status) {
-    window.location.href = "/login";
-  }
+
+  const { loading, error, user } = useSelector((state) => {
+    return state?.users;
+  });
+
+  // useEffect(() => {
+  //   if (user) {
+  //     window.location.href = "/login";
+  //   }
+  // }, [user]);
 
   return (
     <>
@@ -38,12 +49,11 @@ const RegisterForm = () => {
                 <h3 className="mb-8 text-4xl md:text-5xl font-bold font-heading">
                   Signing up with social is super quick
                 </h3>
+
+                <p className="mb-5">Please, do not hesitate</p>
                 {/* errr */}
                 {/* Error */}
-                {userAuth?.error?.message && (
-                  <ErrorComponent message={userAuth?.error?.message} />
-                )}
-                <p className="mb-10">Please, do not hesitate</p>
+                {error && <ErrorMsg message={error?.message} />}
                 <form onSubmit={onSubmitHandler}>
                   <input
                     name="fullname"
@@ -69,12 +79,13 @@ const RegisterForm = () => {
                     type="password"
                     placeholder="Enter your password"
                   />
-                  <button
-                    // disable the button if loading is true
-                    disabled={loading}
-                    className="mt-12 md:mt-16 bg-blue-800 hover:bg-blue-900 text-white font-bold font-heading py-5 px-8 rounded-md uppercase">
-                    {loading ? "Loading..." : "Register"}
-                  </button>
+                  {loading ? (
+                    <LoadingComponent />
+                  ) : (
+                    <button className="mt-12 md:mt-16 bg-blue-800 hover:bg-blue-900 text-white font-bold font-heading py-5 px-8 rounded-md uppercase">
+                      Register
+                    </button>
+                  )}
                 </form>
               </div>
             </div>

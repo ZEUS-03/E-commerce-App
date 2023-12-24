@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUserAction } from "../../../redux/slices/usersSlice";
+import Modal from "../../../utils/modal";
+import LoadingComponent from "../../LoadingComp/LoadingComponent";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "admin@gmail.com",
+    email: "Admin@gmail.com",
     password: "12345",
   });
-  //---Destructuring---
+  //---- Destructuring ----
   const { email, password } = formData;
-  //---onchange handler----
+  // ---- onchange handler ----
 
   const dispatch = useDispatch();
 
@@ -20,16 +22,26 @@ const Login = () => {
   //---onsubmit handler----
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    // console.log(email, password);
     dispatch(loginUserAction({ email, password }));
   };
 
+  const { loading, error, userInfo } = useSelector((state) => {
+    return state?.users?.userAuth;
+  });
+
   //select store data
-  const { loading, userAuth } = {};
-  //redirect
-  if (userAuth?.userInfo?.status) {
-    window.location.href = "/admin";
-  }
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     if (userInfo?.userFound?.isAdmin) {
+  //       window.location.href = "/admin";
+  //       // alert("test");
+  //     } else {
+  //       window.location.href = "/customer-profile";
+  //     }
+  //   }
+  // }, [userInfo]);
+
   return (
     <>
       <section className="py-20 bg-gray-100 overflow-x-hidden">
@@ -41,14 +53,15 @@ const Login = () => {
                 <h3 className="mb-8 text-4xl md:text-5xl font-bold font-heading">
                   Login to your account
                 </h3>
-                <p className="mb-10 font-semibold font-heading">
+                <p className="mb-5 font-semibold font-heading">
                   Happy to see you again
                 </p>
+
                 <form
                   className="flex flex-wrap -mx-4"
                   onSubmit={onSubmitHandler}
                 >
-                  <div className="w-full md:w-1/2 px-4 mb-8 md:mb-12">
+                  <div className="w-full md:w-1/2 px-4 mb-8 md:mb-5">
                     <label>
                       <h4 className="mb-5 text-gray-400 uppercase font-bold font-heading">
                         Your Email
@@ -62,7 +75,7 @@ const Login = () => {
                       />
                     </label>
                   </div>
-                  <div className="w-full md:w-1/2 px-4 mb-12">
+                  <div className="w-full md:w-1/2 px-4 mb-5">
                     <label>
                       <h4 className="mb-5 text-gray-400 uppercase font-bold font-heading">
                         Password
@@ -76,11 +89,22 @@ const Login = () => {
                       />
                     </label>
                   </div>
-
+                  {error && (
+                    <span className="text-red-600 font-normal w-full md:w-1/2 px-4 mb-5">
+                      {error?.message.replace(
+                        "Internal Server Error: Error:",
+                        ""
+                      )}
+                    </span>
+                  )}
                   <div className="w-full px-4">
-                    <button className="bg-blue-800 hover:bg-blue-900 text-white font-bold font-heading py-5 px-8 rounded-md uppercase">
-                      Login
-                    </button>
+                    {loading ? (
+                      <LoadingComponent />
+                    ) : (
+                      <button className="bg-blue-800 hover:bg-blue-900 text-white font-bold font-heading py-5 px-12 rounded-md uppercase">
+                        Login
+                      </button>
+                    )}
                   </div>
                 </form>
               </div>

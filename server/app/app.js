@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const Stripe = require("stripe");
 const Order = require("../model/Order.js");
 
@@ -28,7 +29,7 @@ const couponRouter = require("../routes/couponRoute");
 
 dbConnect();
 const app = express();
-
+app.use(cors()); // accept any request from client
 // stripe instance
 const stripe = new Stripe(process.env.STRIPE_KEY);
 // This is your Stripe CLI webhook secret for testing your endpoint locally.

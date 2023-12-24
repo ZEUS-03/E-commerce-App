@@ -53,6 +53,7 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
       throw new Error("Invalid credentials");
     }
   } catch (error) {
+    console.log(error);
     throw new Error("Internal Server Error: " + error);
   }
 });

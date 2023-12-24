@@ -1,11 +1,8 @@
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
+import React from "react";
 
 const ErrorMsg = ({ message }) => {
-  Swal.fire({
-    icon: "error",
-    title: "Oops...",
-    text: message,
-  });
+  return <p className="text-red-600">{message}</p>;
 };
 
 export default ErrorMsg;
