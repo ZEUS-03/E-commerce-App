@@ -66,8 +66,3 @@ We welcome contributions from the community! If you'd like to contribute to the 
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Acknowledgments
-
-- Thanks to [Author Name] for the inspiration and guidance.
-- Special thanks to our contributors for making this project better!
-
