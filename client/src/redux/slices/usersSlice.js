@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 import baseURL from "../../utils/baseURL";
+import { errorReseter } from "../globalActions/globalAction";
 
 // Initial State
 
@@ -84,6 +85,10 @@ const userSlice = createSlice({
     builder.addCase(registerUserAction.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
+    });
+    // Error resetter
+    builder.addCase(errorReseter.pending, (state) => {
+      state.error = null;
     });
   },
 });

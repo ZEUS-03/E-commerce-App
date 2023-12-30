@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUserAction } from "../../../redux/slices/usersSlice";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
+import { resetError } from "../../../helper/ResetErr";
 
 const RegisterForm = () => {
   //dispatch
@@ -23,6 +24,7 @@ const RegisterForm = () => {
   //---onsubmit handler----
   const onSubmitHandler = (e) => {
     e.preventDefault();
+    resetError(dispatch);
     dispatch(registerUserAction({ fullname, email, password }));
   };
   //select store data
