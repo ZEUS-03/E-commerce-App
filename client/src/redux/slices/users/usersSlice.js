@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-import baseURL from "../../utils/baseURL";
-import { errorReseter } from "../globalActions/globalAction";
+import baseURL from "../../../utils/baseURL";
+import { errorReseter } from "../../globalActions/globalAction";
 
 // Initial State
 
@@ -15,7 +15,9 @@ const initialState = {
   userAuth: {
     loading: false,
     error: null,
-    userInfo: {},
+    userInfo: localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : null,
   },
 };
 

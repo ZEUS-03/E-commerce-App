@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserAction } from "../../../redux/slices/usersSlice";
+import { loginUserAction } from "../../../redux/slices/users/usersSlice";
 import Modal from "../../../utils/modal";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 
