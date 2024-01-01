@@ -7,6 +7,8 @@ import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
 import { createProductAction } from "../../../redux/slices/products/productsSlice";
 import { getCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
+import { getBrandAction } from "../../../redux/slices/brands/brandsSlice";
+import { getAllColorAction } from "../../../redux/slices/colors/colorsSlice";
 
 //animated components for react-select
 const animatedComponents = makeAnimated();
@@ -29,13 +31,32 @@ export default function AddProduct() {
 
   useEffect(() => {
     dispatch(getCategoriesAction());
+    dispatch(getBrandAction());
+    dispatch(getAllColorAction());
   }, [dispatch]);
 
+  // Categories
   const { categories, loading, error } = useSelector(
     (state) => state?.category?.categories
   );
+  // Brand
+  const { brands } = useSelector((state) => state?.brands?.brands);
 
-  let colorOptionsCoverted, handleColorChangeOption, brands, isAdded;
+  // Color
+  const { allColors } = useSelector((state) => state?.colors?.colors);
+  const [colorOption, setColorOption] = useState([]);
+  const colorOptionsConverted = allColors?.map((color) => {
+    return {
+      value: color?.name,
+      label: color?.name,
+    };
+  });
+
+  const handleColorChangeOption = (colors) => {
+    setColorOption(colors);
+  };
+
+  let isAdded;
 
   //---form data---
   const [formData, setFormData] = useState({
@@ -178,7 +199,7 @@ export default function AddProduct() {
                   components={animatedComponents}
                   isMulti
                   name="colors"
-                  options={colorOptionsCoverted}
+                  options={colorOptionsConverted}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   isClearable={true}
