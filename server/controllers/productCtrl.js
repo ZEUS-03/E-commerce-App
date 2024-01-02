@@ -150,7 +150,7 @@ const allProducts = asyncHandler(async (req, res) => {
   // Pagination
   const pagination = {};
 
-  if (endIndex > total) {
+  if (endIndex < total) {
     pagination.next = {
       page: page + 1,
       limit,

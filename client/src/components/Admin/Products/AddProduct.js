@@ -16,6 +16,17 @@ const animatedComponents = makeAnimated();
 export default function AddProduct() {
   const dispatch = useDispatch();
 
+  // Files
+  const [files, setFiles] = useState([]);
+  const [fileErr, setFileErr] = useState([]);
+
+  const fileHandleChange = (event) => {
+    // console.log(event.target, event.target.files);
+    const newFiles = Array.from(event.target.files);
+    setFiles(newFiles);
+    // console.log(newFiles);
+  };
+
   // Sizes
   const sizes = ["S", "M", "L", "XL", "XXL"];
   const [sizeOption, setSizeOption] = useState([]);
@@ -66,7 +77,6 @@ export default function AddProduct() {
     sizes: "",
     brand: "",
     colors: "",
-    images: "",
     price: "",
     totalQty: "",
   });
@@ -79,6 +89,7 @@ export default function AddProduct() {
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    console.log(sizeOption);
     dispatch(createProductAction(formData));
     //reset form data
     // setFormData({
@@ -92,6 +103,14 @@ export default function AddProduct() {
     //   price: "",
     //   totalQty: "",
     // });
+    dispatch(
+      createProductAction({
+        ...formData,
+        files: files,
+        colors: colorOption.map((color) => color.label),
+        sizes: sizeOption.map((size) => size?.label),
+      })
+    );
   };
 
   return (
@@ -244,7 +263,7 @@ export default function AddProduct() {
                           <input
                             name="images"
                             value={formData.images}
-                            onChange={handleOnChange}
+                            onChange={fileHandleChange}
                             type="file"
                           />
                         </label>
