@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import baseURL from "../../../utils/baseURL";
 import axios from "axios";
+import { errorReseter, successReseter } from "../../globalActions/globalAction";
 
 // Create Product initial state
 const initialState = {
@@ -13,13 +14,10 @@ const initialState = {
   isDeleted: false,
 };
 
-//TODO: Image upload
-
 // Create product action
 export const createProductAction = createAsyncThunk(
   "product/create",
   async (payload, { rejectWithValue, getState, dispatch }) => {
-    console.log(payload);
     try {
       const {
         name,
@@ -30,6 +28,7 @@ export const createProductAction = createAsyncThunk(
         totalQty,
         brand,
         description,
+        files,
       } = payload;
 
       // Authentication using token
@@ -37,21 +36,32 @@ export const createProductAction = createAsyncThunk(
       const config = {
         headers: {
           Authorization: "Bearer " + token,
+          "Content-Type": "multipart/form-data",
         },
       };
 
+      //constructing form data -> Provides a way to easily construct a set of key/value pairs representing form fields and their values, which can then be easily sent using the XMLHttpRequest.send() method. It uses the same format a form would use if the encoding type were set to "multipart/form-data".
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("category", category);
+      formData.append("totalQty", totalQty);
+      formData.append("brand", brand);
+      formData.append("description", description);
+
+      sizes.forEach((size) => {
+        formData.append("sizes", size);
+      });
+      colors.forEach((color) => {
+        formData.append("colors", color);
+      });
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
       const { data } = await axios.post(
         `${baseURL}/products`,
-        {
-          name,
-          category,
-          sizes,
-          colors,
-          price,
-          totalQty,
-          brand,
-          description,
-        },
+        formData,
         config
       );
       return data;
@@ -73,11 +83,19 @@ const productSlice = createSlice({
       state.loading = false;
       state.product = action.payload;
     });
+    // Reset success action
+    builder.addCase(successReseter.pending, (state, action) => {
+      state.isAdded = false;
+    });
     builder.addCase(createProductAction.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
       state.isAdded = false;
       state.product = null;
+    });
+    // Reset error action
+    builder.addCase(errorReseter.pending, (state, action) => {
+      state.error = null;
     });
   },
 });

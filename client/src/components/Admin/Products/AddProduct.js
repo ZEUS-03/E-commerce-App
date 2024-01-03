@@ -9,6 +9,7 @@ import { createProductAction } from "../../../redux/slices/products/productsSlic
 import { getCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
 import { getBrandAction } from "../../../redux/slices/brands/brandsSlice";
 import { getAllColorAction } from "../../../redux/slices/colors/colorsSlice";
+import { errorReseter } from "../../../redux/globalActions/globalAction";
 
 //animated components for react-select
 const animatedComponents = makeAnimated();
@@ -25,6 +26,17 @@ export default function AddProduct() {
     const newFiles = Array.from(event.target.files);
     setFiles(newFiles);
     // console.log(newFiles);
+    const fileErrors = [];
+
+    newFiles.forEach((file) => {
+      if (file?.size > 1000000) {
+        fileErrors.push(`Please upload file of size less than 1MB.`);
+      }
+      if (!file?.type?.startsWith("image/")) {
+        fileErrors.push(`Please upload image file.`);
+      }
+    });
+    setFileErr(fileErrors);
   };
 
   // Sizes
@@ -47,9 +59,7 @@ export default function AddProduct() {
   }, [dispatch]);
 
   // Categories
-  const { categories, loading, error } = useSelector(
-    (state) => state?.category?.categories
-  );
+  const { categories } = useSelector((state) => state?.category?.categories);
   // Brand
   const { brands } = useSelector((state) => state?.brands?.brands);
 
@@ -66,8 +76,6 @@ export default function AddProduct() {
   const handleColorChangeOption = (colors) => {
     setColorOption(colors);
   };
-
-  let isAdded;
 
   //---form data---
   const [formData, setFormData] = useState({
@@ -89,20 +97,19 @@ export default function AddProduct() {
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    console.log(sizeOption);
-    dispatch(createProductAction(formData));
-    //reset form data
-    // setFormData({
-    //   name: "",
-    //   description: "",
-    //   category: "",
-    //   sizes: "",
-    //   brand: "",
-    //   colors: "",
-    //   images: "",
-    //   price: "",
-    //   totalQty: "",
-    // });
+    dispatch(errorReseter());
+    // reset form data
+    setFormData({
+      name: "",
+      description: "",
+      category: "",
+      sizes: "",
+      brand: "",
+      colors: "",
+      images: "",
+      price: "",
+      totalQty: "",
+    });
     dispatch(
       createProductAction({
         ...formData,
@@ -113,9 +120,10 @@ export default function AddProduct() {
     );
   };
 
+  const { isAdded, loading, error } = useSelector((state) => state?.products);
+
   return (
     <>
-      {error && <ErrorMsg message={error?.message} />}
       {isAdded && <SuccessMsg message="Product Added Successfully" />}
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -132,6 +140,12 @@ export default function AddProduct() {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={handleOnSubmit}>
+              {error && <ErrorMsg message={error?.message} />}
+              {fileErr?.length > 0 && (
+                <ErrorMsg
+                  message={"Please input a valid image with a valid size."}
+                />
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Product Name
@@ -269,7 +283,7 @@ export default function AddProduct() {
                         </label>
                       </div>
                       <p className="text-xs text-gray-500">
-                        PNG, JPG, GIF up to 10MB
+                        PNG, JPG, GIF up to 1MB
                       </p>
                     </div>
                   </div>
@@ -330,6 +344,7 @@ export default function AddProduct() {
                   <LoadingComponent />
                 ) : (
                   <button
+                    disabled={fileErr?.length > 0}
                     type="submit"
                     className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
