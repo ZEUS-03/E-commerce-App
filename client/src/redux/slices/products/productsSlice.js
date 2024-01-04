@@ -71,6 +71,18 @@ export const createProductAction = createAsyncThunk(
   }
 );
 
+export const fetchAllProductAction = createAsyncThunk(
+  "product/fetch",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const { data } = await axios.get(`${baseURL}/products`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 const productSlice = createSlice({
   name: "product",
   initialState,
@@ -83,19 +95,33 @@ const productSlice = createSlice({
       state.loading = false;
       state.product = action.payload;
     });
-    // Reset success action
-    builder.addCase(successReseter.pending, (state, action) => {
-      state.isAdded = false;
-    });
+
     builder.addCase(createProductAction.rejected, (state, action) => {
       state.error = action.payload;
       state.loading = false;
       state.isAdded = false;
       state.product = null;
     });
+
+    builder.addCase(fetchAllProductAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchAllProductAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.products = action.payload;
+    });
+    builder.addCase(fetchAllProductAction.rejected, (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+      state.products = null;
+    });
     // Reset error action
     builder.addCase(errorReseter.pending, (state, action) => {
       state.error = null;
+    });
+    // Reset success action
+    builder.addCase(successReseter.pending, (state, action) => {
+      state.isAdded = false;
     });
   },
 });
