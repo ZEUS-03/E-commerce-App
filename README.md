@@ -1,4 +1,5 @@
 # E-commerce-App
+
 # E-Commerce Project
 
 ## Overview
@@ -33,36 +34,31 @@ To get started with the project, follow these steps:
 
 1. Clone the repository:
 
-    ```bash
-    https://github.com/ZEUS-03/E-commerce-App.git
-    ```
+   ```bash
+   https://github.com/ZEUS-03/E-commerce-App.git
+   ```
 
 2. Install dependencies:
 
-    ```bash
-    cd E-commerce-App
-    npm install
-    ```
+   ```bash
+   cd E-commerce-App
+   npm install
+   ```
 
 3. Configure environment variables:
 
-    - Set up your MongoDB connection string.
-    - Configure Cloudinary credentials.
-    - Add any additional environment variables required.
+   - Set up your MongoDB connection string.
+   - Configure Cloudinary credentials.
+   - Add any additional environment variables required.
 
 4. Run the application:
 
-    ```bash
-    npm start
-    ```
+   ```bash
+   npm start
+   ```
 
 5. Open your browser and navigate to `http://localhost:3000` to access the application.
 
 ## Contributing
 
-We welcome contributions from the community! If you'd like to contribute to the project, please follow our [Contribution Guidelines](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
+We welcome contributions from the community! If you'd like to contribute to the project, please follow Contribution Guidelines.
