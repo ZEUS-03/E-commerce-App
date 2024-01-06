@@ -6,8 +6,8 @@ import LoadingComponent from "../../LoadingComp/LoadingComponent";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "Admin@gmail.com",
-    password: "12345",
+    email: "test@test.com",
+    password: "11111",
   });
   //---- Destructuring ----
   const { email, password } = formData;

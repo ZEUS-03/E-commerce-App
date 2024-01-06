@@ -16,7 +16,7 @@ categoryRouter.post(
   "/",
   isUserLoggedIn,
   isAdmin,
-  // upload.single("file"),
+  upload.single("file"),
   createCategoryCtrl
 );
 categoryRouter.get("/", getAllCategoriesCtrl);
