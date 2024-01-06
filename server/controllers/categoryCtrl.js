@@ -14,7 +14,7 @@ const createCategoryCtrl = asyncHandler(async (req, res) => {
   }
   // create new category if it doesn't already exist
   const category = await Category.create({
-    name: name.toLowerCase(),
+    name: name?.toLowerCase(),
     user: req.userAuthId,
     image: req?.file?.path,
   });
