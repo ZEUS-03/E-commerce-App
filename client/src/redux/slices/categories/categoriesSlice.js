@@ -18,8 +18,12 @@ export const createCategoryAction = createAsyncThunk(
   "category/create",
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
-      const { name } = payload;
+      const { name, image } = payload;
 
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("file", image);
+      console.log(image);
       // Authentication using token
       const token = getState()?.users?.userAuth?.userInfo?.token;
       const config = {
@@ -27,11 +31,10 @@ export const createCategoryAction = createAsyncThunk(
           Authorization: "Bearer " + token,
         },
       };
+
       const { data } = await axios.post(
         `${baseURL}/category`,
-        {
-          name,
-        },
+        formData,
         config
       );
       return data;

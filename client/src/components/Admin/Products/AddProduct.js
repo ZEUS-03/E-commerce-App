@@ -299,6 +299,7 @@ export default function AddProduct() {
                 <div className="mt-1">
                   <input
                     name="price"
+                    multiple
                     value={formData.price}
                     onChange={handleOnChange}
                     type="number"
