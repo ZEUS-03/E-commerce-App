@@ -1,8 +1,19 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import { useDispatch, useSelector } from "react-redux";
+import { getCategoriesAction } from "../../redux/slices/categories/categoriesSlice";
+
 const HomeCategories = () => {
-  const categoriesToShow = [];
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCategoriesAction());
+  }, [dispatch]);
+
+  const { categories } = useSelector((state) => state?.category);
+
+  const categoriesToShow = categories?.categories?.slice(0, 4);
 
   return (
     <>
@@ -14,7 +25,8 @@ const HomeCategories = () => {
                 <Link
                   key={category.name}
                   to={`/products-filters?category=${category.name}`}
-                  className="relative flex h-80 w-56 flex-col overflow-hidden rounded-lg p-6 hover:opacity-75 xl:w-auto">
+                  className="relative flex h-80 w-56 flex-col overflow-hidden rounded-lg p-6 hover:opacity-75 xl:w-auto"
+                >
                   <span aria-hidden="true" className="absolute inset-0">
                     <img
                       src={category.image}

@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -10,8 +10,19 @@ import { Link } from "react-router-dom";
 import baseURL from "../../utils/baseURL";
 import logo from "./logo3.png";
 
+import { useDispatch, useSelector } from "react-redux";
+import { getCategoriesAction } from "../../redux/slices/categories/categoriesSlice";
+
 export default function Navbar() {
-  const categoriesToDisplay = [];
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCategoriesAction());
+  }, [dispatch]);
+
+  const { categories } = useSelector((state) => state?.category);
+
+  const categoriesToDisplay = categories?.categories?.slice(0, 4);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

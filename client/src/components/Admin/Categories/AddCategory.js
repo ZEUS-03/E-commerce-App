@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import ErrorComponent from "../../ErrorMsg/ErrorMsg";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createCategoryAction } from "../../../redux/slices/categories/categoriesSlice";
+import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 
 export default function CategoryToAdd() {
   const [formData, setFormData] = useState({
@@ -19,7 +19,6 @@ export default function CategoryToAdd() {
 
   const fileHandleChange = (event) => {
     const newFile = event.target.files[0];
-
     if (newFile?.size > 1000000) {
       setFileErr(`Please upload file of size less than 1MB.`);
     }
@@ -32,16 +31,15 @@ export default function CategoryToAdd() {
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  let { error, isAdded, loading } = {};
+  // console.log(fileErr);
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
     dispatch(createCategoryAction({ name: formData?.name, image: file }));
   };
+  const { isAdded, loading, error } = useSelector((state) => state?.category);
   return (
     <>
-      {error && <ErrorComponent message={error?.message} />}
       {isAdded && <SuccessMsg message="Category added successfully" />}
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -129,11 +127,14 @@ export default function CategoryToAdd() {
                   </div>
                 </div>
               </div>
+              {error && <ErrorMsg message={error?.message} />}
+              {fileErr && <ErrorMsg message={fileErr} />}
               <div>
                 {loading ? (
                   <LoadingComponent />
                 ) : (
                   <button
+                    disabled={fileErr ? true : false}
                     type="submit"
                     className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >

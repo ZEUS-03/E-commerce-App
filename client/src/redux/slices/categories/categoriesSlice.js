@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import baseURL from "../../../utils/baseURL";
 import axios from "axios";
+import { errorReseter, successReseter } from "../../globalActions/globalAction";
 
 // Create category initial state
 const initialState = {
@@ -81,7 +82,6 @@ const categorySlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getCategoriesAction.fulfilled, (state, action) => {
-      state.isAdded = true;
       state.loading = false;
       state.categories = action.payload;
     });
@@ -90,6 +90,14 @@ const categorySlice = createSlice({
       state.loading = false;
       state.isAdded = false;
       state.categories = null;
+    });
+    // Reset error action
+    builder.addCase(errorReseter.pending, (state, action) => {
+      state.error = null;
+    });
+    // Reset success action
+    builder.addCase(successReseter.pending, (state, action) => {
+      state.isAdded = false;
     });
   },
 });

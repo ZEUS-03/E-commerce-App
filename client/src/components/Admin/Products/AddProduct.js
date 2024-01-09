@@ -121,8 +121,6 @@ export default function AddProduct() {
   };
 
   const { isAdded, loading, error } = useSelector((state) => state?.products);
-  console.log(isAdded);
-
   return (
     <>
       {isAdded && <SuccessMsg message="Product Added Successfully" />}
