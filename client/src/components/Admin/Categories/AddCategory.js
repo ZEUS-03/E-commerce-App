@@ -5,6 +5,7 @@ import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { createCategoryAction } from "../../../redux/slices/categories/categoriesSlice";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
+import { errorReseter } from "../../../redux/globalActions/globalAction";
 
 export default function CategoryToAdd() {
   const [formData, setFormData] = useState({
@@ -35,6 +36,7 @@ export default function CategoryToAdd() {
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    dispatch(errorReseter());
     dispatch(createCategoryAction({ name: formData?.name, image: file }));
   };
   const { isAdded, loading, error } = useSelector((state) => state?.category);
