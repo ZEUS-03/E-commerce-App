@@ -2,18 +2,22 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchAllProductAction } from "../../redux/slices/products/productsSlice";
+import baseURL from "../../utils/baseURL";
 
 const HomeProductTrending = () => {
   const dispatch = useDispatch();
+  const productURL = `${baseURL}/products`;
+
   useEffect(() => {
-    dispatch(fetchAllProductAction());
+    dispatch(fetchAllProductAction({ url: productURL }));
   }, [dispatch]);
+  // URLs:
   const {
     products: { products },
     loading,
     error,
   } = useSelector((state) => state?.products);
-  console.log(products);
+  // console.log(products);
   return (
     <>
       <section aria-labelledby="trending-heading">

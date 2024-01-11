@@ -8,6 +8,11 @@ import {
 } from "@headlessui/react";
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import baseURL from "../../../utils/baseURL";
+
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -15,6 +20,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/20/solid";
 import Products from "./Products";
+import { fetchAllProductAction } from "../../../redux/slices/products/productsSlice";
 
 const sortOptions = [
   { name: "Most Popular", href: "#", current: true },
@@ -61,14 +67,30 @@ export default function ProductsFilters() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  const dispatch = useDispatch();
+
+  // Query string
+
+  const [params, setParams] = useSearchParams();
+  const category = params.get("category");
+  // console.log(category);
+
+  // Set filters:
+  const [color, setColor] = useState("");
+  const [price, setPrice] = useState("");
+  const [brand, setBrand] = useState("");
+  const [size, setSize] = useState("");
+
+  // URLs:
+  const productURL = `${baseURL}/products`;
+  useEffect(() => {
+    dispatch(fetchAllProductAction({ url: productURL }));
+  }, [dispatch]);
+
   let colorsLoading;
   let colorsError;
   let colors;
-  let setPrice;
   let brands;
-  let setSize;
-  let setColor;
-  let setBrand;
   let productsLoading;
   let productsError;
   let products;
