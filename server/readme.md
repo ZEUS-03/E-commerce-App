@@ -1,4 +1,4 @@
-# Express eCommerce Backend
+# eCommerce Backend
 
 This is the backend server for an eCommerce application built with Express, featuring authentication using JWT, file upload with Multer, and Cloudinary for cloud storage.
 
