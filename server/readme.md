@@ -9,9 +9,3 @@ This is the backend server for an eCommerce application built with Express, feat
 - **Cloudinary Integration**: Seamlessly integrate Cloudinary for cloud-based file storage.
 - **Express Routes**: Well-organized routes for eCommerce functionality.
 
-## Prerequisites
-
-Make sure you have the following installed on your machine:
-
-- [Node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
